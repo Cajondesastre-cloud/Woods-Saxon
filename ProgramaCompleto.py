@@ -25,6 +25,21 @@ x = np.linspace(0, R + Rn, 1000)           # Array de posiciones.
 dx = x[1]-x[0]                             # Diferencial de x.
 W0 = 50                                    # Inicialización pozo en MeV.
 
+# Normalización.
+
+def norm(array, h):
+    tot = 0
+    for i in range(len(array)):
+        tot += abs(array[i])*h
+    return array/tot
+
+##############################################################################
+##############################################################################
+##############################################################################
+#######################################################
+#######################################################
+#############################################
+#############################################
 
 # Funciones de resolución de ecuaciones diferenciales.
 
@@ -52,7 +67,7 @@ def Runge2(h,f,g,w,u,r, E, tipo): # Método de Runge-Kutta Orden 2 para ec. dif 
     w2 = w + k2_g
     return w2, u2
 
-def Leap(h,f,r,t,E,i, xapoyo, tipo): #Método Leapfrog para ec. dif 2º ord.
+def Leap(h,f,r,t,E,i, xapoyo, tipo):    #Método Leapfrog para ec. dif 2º ord.
     if i == 0:
         x12 = r+h/2*f(r,t, E)
     elif i != 0:
@@ -62,10 +77,25 @@ def Leap(h,f,r,t,E,i, xapoyo, tipo): #Método Leapfrog para ec. dif 2º ord.
     xapoyo = x32
     return x2, xapoyo
 
-def Euler(h,f,g,w,u,r, E, tipo): # Método de Euler para ec. dif 2º ord.
+def Euler(h,f,g,w,u,r, E, tipo):        # Método de Euler para ec. dif 2º ord.
     u2 = u + h*f(w,u,r,E)
     w2 = w + h*g(w,u,r,E, tipo)
     return w2, u2
+
+#############################################
+#############################################
+#######################################################
+#######################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+#######################################################
+#######################################################
+#############################################
+#############################################
 
 # Funciones de la ecuación diferencial. Ec. de Schrödinger.
 
@@ -77,46 +107,60 @@ def f2(w,u,r, E, tipo):
     if tipo == 1:
         dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)))
     elif tipo == 2:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2)
+        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) 
+                        +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2)
     elif tipo == 3:
         dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2*r**2))
     elif tipo == 4:
          if r != 0:
-             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)*np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
+             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)*
+                             np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
          elif r == 0:
              dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2))
     elif tipo == 5:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 -l*(l+1)/(0.0483*2*r**2))
+        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) +W0*np.exp((r-R)/a)/
+                        (1 + np.exp((r-R)/a))**2 -l*(l+1)/(0.0483*2*r**2))
     elif tipo ==6:
         if r != 0:
-             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 -l*(l+1)*np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
+             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) 
+                        +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 
+                    -l*(l+1)*np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
         elif r == 0:
-             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 -l*(l+1)/(0.0483*2))
+             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) 
+                             +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 
+                             -l*(l+1)/(0.0483*2))
     return dwdr
 
 def f(r, t, E, tipo):
     dwdt=np.array([r[1], -r[0]*0.0483*(E + V0/(1+np.exp((t-R)/a)))])
     return dwdt
 
-# Normalización.
-
-def norm(array, h):
-    tot = 0
-    for i in range(len(array)):
-        tot += abs(array[i])*h
-    return array/tot
-
+#############################################
+#############################################
+#######################################################
+#######################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+#######################################################
+#######################################################
+#############################################
+#############################################
 
 # Menús de selección de métodos y condiciones de contorno.
 
-menu = input("¿Quiere seleccionar opciones de representación? (En caso negativo se ejecutará rápidamente) \n\
-             Sí (s) o No (n): \n")
+menu = input("¿Quiere seleccionar opciones de representación? \
+(En caso negativo se ejecutará rápidamente) \n Sí (s) o No (n): \n")
              
 if menu == "s":
-    acabar = False # Booleano para repetición de menú.
+    acabar = False                          # Booleano para repetición de menú.
     while acabar == False:
     
-        selec = int(input("Elija el método para la resolución de la ecuación de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
+        selec = int(input("Elija el método para la resolución de la ecuación \
+de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
          2. Runge-Kutta 2º orden. \n 3. Leapfrog. \n 4. Euler. \n"))
          
         if selec == 1:
@@ -128,17 +172,27 @@ if menu == "s":
         elif selec == 4:
             func = Euler
         
-        (n, l) = (int(input("Número cuántico principal: \n")), int(input("Número cuántico azimutal: \n ")))
+        (n, l) = (int(input("Número cuántico principal: \n")), 
+                  int(input("Número cuántico azimutal: \n ")))
+        
+        if n >= l:
+            factor = n-l
+        elif l > n:
+            factor = l-n +1
         
         if l == 0:
-            tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 1. Clásico \n 2. Modificado. \n"))
+            tipo = int(input("¿Cuál versión del potencial de Woods-Saxon? \
+\n 1. Clásico \n 2. Modificado. \n"))
         
         if l != 0:
-            app = int(input("¿Realizar aproximación o tomar r cerca de 0? \n 1. Aproximación \n 2. Cerca de 0. \n"))
+            app = int(input("¿Realizar aproximación o tomar r cerca de 0? \
+\n 1. Aproximación \n 2. Cerca de 0. \n"))
             if app == 1:
-                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 4. Clásico \n 6. Modificado. \n "))
+                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon? \
+\n 4. Clásico \n 6. Modificado. \n "))
             elif app == 2:
-                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 3. Clásico \n 5. Modificado. \n "))
+                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon? \
+\n 3. Clásico \n 5. Modificado. \n "))
             
         if tipo == 3 or tipo == 5:
             x = np.linspace(1e-5, R + 15, 1000)      # Array de posiciones.
@@ -146,9 +200,10 @@ if menu == "s":
         if tipo == 5 or tipo == 6 or tipo == 2:
             W0 = float(input("Introducir profundidad del pozo, W0 (float): \n "))
             
-        met = int(input("¿Cuál método de búsqueda de autovalores? \n 1. Bipartición. \n 2. Newton. \n"))
+        met = int(input("¿Cuál método de búsqueda de autovalores? \
+\n 1. Bipartición. \n 2. Newton. \n"))
         
-        if met == 1:                            # Resolviendo por bipartición.
+        if met == 1:                                # Resolviendo por bipartición.
             Nmax = 100
             prec = 1e-15
             if (n, l) == (0,0):
@@ -171,21 +226,21 @@ if menu == "s":
                     if c == Nmax: 
                         break
                     u0 = 0                      # Condición inicial para r*R(r)
-                    w0 = 1e-5                   # Condición inicial para du/dr
-                    urunge4 = []
-                    wrunge4 = []
-                    urunge4.append(u0)
-                    wrunge4.append(w0)
+                    w0 = 1e-5*(-1)**(factor)    # Condición inicial para du/dr
+                    ur = []
+                    wr = []
+                    ur(u0)
+                    wr(w0)
                     for i in range(len(x)-1):
-                        sol = func(dx,f1, f2 ,wrunge4[i], urunge4[i], x[i], En, tipo)
-                        urunge4.append(sol[1])
-                        wrunge4.append(sol[0])
+                        sol = func(dx,f1, f2 ,wr[i], ur[i], x[i], En, tipo)
+                        ur.append(sol[1])
+                        wr.append(sol[0])
                         if i == len(x)-2:
-                            if urunge4[-1] > 0:
+                            if ur[-1] > 0:
                                 Emin = En
                                 En = Emin + (Emax-Emin)/2
                                 break
-                            elif urunge4[i+1] < 0:
+                            elif ur[i+1] < 0:
                                 Emax = En
                                 En = Emax - (Emax-Emin)/2
                                 break
@@ -193,16 +248,14 @@ if menu == "s":
                     
                 print(En)
             
-            
             if selec == 1 and selec == 3:
                 c = 0                           # Contador
                 while dE0 > prec:
                     c += 1
                     if c == Nmax: 
                         break
-                    u0 = 0                                  # Condición inicial para r*R(r)
-                    w0 = 1e-5                               # Condición inicial para du/dr
-                    oscleap=0
+                    u0 = 0                       # Condición inicial para r*R(r)
+                    w0 = 1e-5*(-1)**(factor)     # Condición inicial para du/dr
                     oscleap = []
                     oscleap.append([u0,w0])
                     roscapoyo = [0,0]
@@ -222,7 +275,6 @@ if menu == "s":
     
                 print(En)
         
-            
         if met == 2:
             Nmax = 100
             prec = 1e-15
@@ -235,14 +287,33 @@ if menu == "s":
         rep = input("¿Quiere representar los resultados (s/n)?\n")
         
         if rep == "s":
-            break
+            plt.title("U(r) frente a la coordenada radial")
+            plt.xlabel("r (fm)")
+            plt.ylabel("U(r)")
+            urn = norm(ur, dx)
+            plt.plot(x,urn, color ="k", label="n = {}". format(n))
+            plt.legend(loc="best", frameon = False)
+            
+
+            fig2 = plt.figure()
+            plt.title("R(r) frente a la coordenada radial")
+            plt.xlabel("r (fm)")
+            plt.ylabel("R(r)")
+            rr = np.zeros(len(ur))
+            rr[1:] = urn[1:]/x[1:]
+            rrn = norm(rr, dx)
+            plt.plot(x[1:], rrn[1:], color="k", label="n = {}". format(n))
+            plt.legend(loc="best", frameon = False)
         
         fin = input("¿Quiere seguir haciendo simulaciones (s/n)?\n")
         
         if fin == "n":
-            acabar = False
+            acabar = True
             
-        
-
-
-
+#############################################
+#############################################
+#######################################################
+#######################################################
+##############################################################################
+##############################################################################
+##############################################################################
