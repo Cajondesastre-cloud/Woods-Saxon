@@ -28,7 +28,7 @@ W0 = 50                                    # Inicialización pozo en MeV.
 
 # Funciones de resolución de ecuaciones diferenciales.
 
-def Runge4(h,f,g,w,u,r, E): # Método de Runge-Kutta Orden 4 para ec. dif 2º ord.
+def Runge4(h,f,g,w,u,r, E, tipo): # Método de Runge-Kutta Orden 4 para ec. dif 2º ord.
     
     k1 = h*f(w,u,r,E)
     k1_g = h*g(w,u,r, E)
@@ -42,7 +42,7 @@ def Runge4(h,f,g,w,u,r, E): # Método de Runge-Kutta Orden 4 para ec. dif 2º or
     w2 = w + 1/6*(k1_g+2*k2_g+2*k3_g+k4_g)
     return w2, u2
 
-def Runge2(h,f,g,w,u,r, E): # Método de Runge-Kutta Orden 2 para ec. dif 2º ord.
+def Runge2(h,f,g,w,u,r, E, tipo): # Método de Runge-Kutta Orden 2 para ec. dif 2º ord.
     
     k1 = h*f(w,u,r,E)
     k1_g = h*g(w,u,r, E)
@@ -52,7 +52,7 @@ def Runge2(h,f,g,w,u,r, E): # Método de Runge-Kutta Orden 2 para ec. dif 2º or
     w2 = w + k2_g
     return w2, u2
 
-def Leap(h,f,r,t,E,i, xapoyo): #Método Leapfrog para ec. dif 2º ord.
+def Leap(h,f,r,t,E,i, xapoyo, tipo): #Método Leapfrog para ec. dif 2º ord.
     if i == 0:
         x12 = r+h/2*f(r,t, E)
     elif i != 0:
@@ -62,9 +62,9 @@ def Leap(h,f,r,t,E,i, xapoyo): #Método Leapfrog para ec. dif 2º ord.
     xapoyo = x32
     return x2, xapoyo
 
-def Euler(h,f,g,w,u,r, E): # Método de Euler para ec. dif 2º ord.
+def Euler(h,f,g,w,u,r, E, tipo): # Método de Euler para ec. dif 2º ord.
     u2 = u + h*f(w,u,r,E)
-    w2 = w + h*g(w,u,r,E)
+    w2 = w + h*g(w,u,r,E, tipo)
     return w2, u2
 
 # Funciones de la ecuación diferencial. Ec. de Schrödinger.
@@ -94,6 +94,10 @@ def f2(w,u,r, E, tipo):
              dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 -l*(l+1)/(0.0483*2))
     return dwdr
 
+def f(r, t, E, tipo):
+    dwdt=np.array([r[1], -r[0]*0.0483*(E + V0/(1+np.exp((t-R)/a)))])
+    return dwdt
+
 # Normalización.
 
 def norm(array, h):
@@ -105,52 +109,140 @@ def norm(array, h):
 
 # Menús de selección de métodos y condiciones de contorno.
 
-selec = int(input("Elija el método para la resolución de la ecuación de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
- 2. Runge-Kutta 2º orden. \n 3. Leapfrog. \n 4. Euler. \n"))
+menu = input("¿Quiere seleccionar opciones de representación? (En caso negativo se ejecutará rápidamente) \n\
+             Sí (s) o No (n): \n")
+             
+if menu == "s":
+    acabar = False # Booleano para repetición de menú.
+    while acabar == False:
+    
+        selec = int(input("Elija el método para la resolución de la ecuación de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
+         2. Runge-Kutta 2º orden. \n 3. Leapfrog. \n 4. Euler. \n"))
+         
+        if selec == 1:
+            func = Runge4
+        elif selec == 2:
+            func = Runge2
+        elif selec == 3:
+            func = Leap
+        elif selec == 4:
+            func = Euler
         
-(n, l) = (int(input("Número cuántico principal: \n")), int(input("Número cuántico azimutal: \n ")))
-
-if l == 0:
-    tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 1. Clásico \n 2. Modificado. \n"))
-
-if l != 0:
-    app = int(input("¿Realizar aproximación o tomar r cerca de 0? \n 1. Aproximación \n 2. Cerca de 0. \n"))
-    if app == 1:
-        tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 4. Clásico \n 6. Modificado. \n "))
-    elif app == 2:
-        tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 3. Clásico \n 5. Modificado. \n "))
+        (n, l) = (int(input("Número cuántico principal: \n")), int(input("Número cuántico azimutal: \n ")))
+        
+        if l == 0:
+            tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 1. Clásico \n 2. Modificado. \n"))
+        
+        if l != 0:
+            app = int(input("¿Realizar aproximación o tomar r cerca de 0? \n 1. Aproximación \n 2. Cerca de 0. \n"))
+            if app == 1:
+                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 4. Clásico \n 6. Modificado. \n "))
+            elif app == 2:
+                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon?\n 3. Clásico \n 5. Modificado. \n "))
+            
+        if tipo == 3 or tipo == 5:
+            x = np.linspace(1e-5, R + 15, 1000)      # Array de posiciones.
+        
+        if tipo == 5 or tipo == 6 or tipo == 2:
+            W0 = float(input("Introducir profundidad del pozo, W0 (float): \n "))
+            
+        met = int(input("¿Cuál método de búsqueda de autovalores? \n 1. Bipartición. \n 2. Newton. \n"))
+        
+        if met == 1:                            # Resolviendo por bipartición.
+            Nmax = 100
+            prec = 1e-15
+            if (n, l) == (0,0):
+                Emax = -30
+                Emin = -40
+            elif (n, l) == (1, 0):
+                Emax = -15
+                Emin = -20
+            elif (n, l) == (2, 0):
+                Emax = -0
+                Emin = -2  
+            Rn = 15   
+            En = (Emax + Emin)/2
+            dE0 = En
+            
+            if selec == 1 and selec != 3:
+                c = 0                           # Contador
+                while dE0 > prec:
+                    c += 1
+                    if c == Nmax: 
+                        break
+                    u0 = 0                      # Condición inicial para r*R(r)
+                    w0 = 1e-5                   # Condición inicial para du/dr
+                    urunge4 = []
+                    wrunge4 = []
+                    urunge4.append(u0)
+                    wrunge4.append(w0)
+                    for i in range(len(x)-1):
+                        sol = func(dx,f1, f2 ,wrunge4[i], urunge4[i], x[i], En, tipo)
+                        urunge4.append(sol[1])
+                        wrunge4.append(sol[0])
+                        if i == len(x)-2:
+                            if urunge4[-1] > 0:
+                                Emin = En
+                                En = Emin + (Emax-Emin)/2
+                                break
+                            elif urunge4[i+1] < 0:
+                                Emax = En
+                                En = Emax - (Emax-Emin)/2
+                                break
+                    dE0 = abs(Emax-Emin)
+                    
+                print(En)
+            
+            
+            if selec == 1 and selec == 3:
+                c = 0                           # Contador
+                while dE0 > prec:
+                    c += 1
+                    if c == Nmax: 
+                        break
+                    u0 = 0                                  # Condición inicial para r*R(r)
+                    w0 = 1e-5                               # Condición inicial para du/dr
+                    oscleap=0
+                    oscleap = []
+                    oscleap.append([u0,w0])
+                    roscapoyo = [0,0]
+                    for i in range(len(x)-1):
+                        oscleap.append(Leap(dx,func,oscleap[i],x[i], En, i, roscapoyo, tipo)[0])
+                        roscapoyo = Leap(dx,f,oscleap[i], x[i],En, i, roscapoyo, tipo)[1]
+                        if i == len(x)-2:
+                            if oscleap[-1][0] > 0:
+                                Emin = En
+                                En = Emin + (Emax-Emin)/2
+                                break
+                            elif oscleap[-1][0] < 0:
+                                Emax = En
+                                En = Emax - (Emax-Emin)/2
+                                break
+                        dE0 = abs(Emax-Emin)
     
-if tipo == 3 or tipo == 5:
-    x = np.linspace(1e-5, R + 15, 1000)      # Array de posiciones.
-
-if tipo == 5 or tipo == 6 or tipo == 2:
-    W0 = float(input("Introducir profundidad del pozo, W0 (float): \n "))
-    
-met = int(input("¿Cuál método de búsqueda de autovalores? \n 1. Bipartición. \n 2. Newton. \n"))
-
-if met == 1:
-    Nmax = 100
-    prec = 1e-15
-    if (n, l) == (0,0):
-        Emax = -30
-        Emin = -40
-    elif (n, l) == (1, 0):
-        Emax = -15
-        Emin = -20
-    elif (n, l) == (2, 0):
-        Emax = -0
-        Emin = -2  
-    Rn = 15   
-    En = (Emax + Emin)/2
-    
-if met == 2:
-    Nmax = 100
-    prec = 1e-15
-    if (n, l) == (0,0):
-        En = -38.2
-        Eap = -38.2   
-        dE0 = 1
-        deltaE = 1e-4
+                print(En)
+        
+            
+        if met == 2:
+            Nmax = 100
+            prec = 1e-15
+            if (n, l) == (0,0):
+                En = -38.2
+                Eap = -38.2   
+                dE0 = 1
+                deltaE = 1e-4
+                
+        rep = input("¿Quiere representar los resultados (s/n)?\n")
+        
+        if rep == "s":
+            break
+        
+        fin = input("¿Quiere seguir haciendo simulaciones (s/n)?\n")
+        
+        if fin == "n":
+            acabar = False
+            
+        
 
 
 
