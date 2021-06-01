@@ -272,6 +272,12 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
                         dE0 = abs(Emax-Emin)
     
                 print(En)
+                ur = []
+                wr = []
+
+                for i in oscleap:
+                    ur.append(i[0])
+                    wr.append(i[1])
               
         rep = input("¿Quiere representar los resultados (s/n)?\n")
         
