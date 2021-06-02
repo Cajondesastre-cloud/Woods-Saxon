@@ -9,9 +9,9 @@ from  matplotlib import animation
 A = 56                                     # Número másico. 
 r0 = 1.285                                 # Constante en m.
 a = 0.65                                   # Consante en m.
-V0 = 47.78                                 # Potencial subcero en meV.
+V0 = 47.78                                 # Potencial subcero en MeV.
 En = -38.5
-Eap = -38.5                                # Energía meV.
+Eap = -38.5                                # Energía MeV.
 R = r0*A**(1/3)                            # Constante radial corteza.
 cte = 0.0483
 Nmax = 500
@@ -51,14 +51,7 @@ def f2(w,u,r, E):
 def f2_l(w, u, r, E):
     dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2*r**2))
     return dwdr
-        
-def f2_l_alt(w,u,r, E):
-    if r != 0:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)*np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
-    elif r == 0:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2))
-    return dwdr
-        
+               
 def norm(array, h):
     tot = 0
     for i in range(len(array)):
