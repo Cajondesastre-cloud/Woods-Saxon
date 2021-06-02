@@ -111,24 +111,11 @@ def f2(w,u,r, E, tipo):
                         +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2)
     elif tipo == 3:
         dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2*r**2))
+
     elif tipo == 4:
-         if r != 0:
-             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)*
-                             np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
-         elif r == 0:
-             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2))
-    elif tipo == 5:
         dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) +W0*np.exp((r-R)/a)/
                         (1 + np.exp((r-R)/a))**2 -l*(l+1)/(0.0483*2*r**2))
-    elif tipo ==6:
-        if r != 0:
-             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) 
-                        +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 
-                    -l*(l+1)*np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
-        elif r == 0:
-             dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) 
-                             +W0*np.exp((r-R)/a)/(1 + np.exp((r-R)/a))**2 
-                             -l*(l+1)/(0.0483*2))
+ 
     return dwdr
 
 def f(r, t, E, tipo):
@@ -174,36 +161,28 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
         
         (n, l) = (int(input("Número cuántico principal: \n")), 
                   int(input("Número cuántico azimutal: \n")))
-        
-        factor = n
-        
+                
         if l == 0:
             tipo = int(input("¿Cuál versión del potencial de Woods-Saxon? \
 \n 1. Clásico \n 2. Generalizado. \n"))
         
         if l != 0:
-            app = int(input("¿Realizar aproximación o tomar r cerca de 0? \
-\n 1. Aproximación \n 2. Cerca de 0. \n"))
-            if app == 1:
-                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon? \
-\n 4. Clásico \n 6. Modificado. \n "))
-            elif app == 2:
-                tipo = int(input("¿Cuál versión del potencial de Woods-Saxon? \
-\n 3. Clásico \n 5. Modificado. \n "))
+            tipo = int(input("¿Cuál versión del potencial de Woods-Saxon? \
+\n 3. Clásico \n 4. Generalizado. \n "))
             
-        if tipo == 3 or tipo == 5:
+        if tipo == 3 or tipo == 4:
             x = np.linspace(1e-5, R + Rn, 1000)      # Array de posiciones.
             dx = x[1] - x[0]                         # Diferencial de x.
         
-        if tipo == 5 or tipo == 6 or tipo == 2:
+        if tipo == 4 or tipo == 2:
             W0 = float(input("Introducir profundidad del pozo, W0 (float): \n "))
             
         met = int(input("¿Cuál método de búsqueda de autovalores? \
 \n 1. Bipartición. \n"))
         
         if met == 1:                 # Resolviendo por bipartición.
-            Nmax = 100
-            prec = 1e-15
+            Nmax = 100               # Número máximo de iteraciones.
+            prec = 1e-15             # Preción máxima requerida.
             if (n, l) == (0,0):      # Cotas de la energía para cada estado.
                 Emax = -30
                 Emin = -40
@@ -213,6 +192,18 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
             elif (n, l) == (2, 0):
                 Emax = -0
                 Emin = -2  
+            elif (n, l) == (0,1):
+                Emax = -30
+                Emin = -35
+            elif (n, l) == (0,2):
+                Emax = -20
+                Emin = -30
+            elif (n, l) == (1,1):
+                Emax = -10
+                Emin = -15
+            elif (n, l) == (1,2):
+                Emax = -1
+                Emin = -7   
             Rn = 15   
             En = (Emax + Emin)/2
             dE0 = abs(En)
@@ -224,7 +215,7 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
                     if c == Nmax: 
                         break
                     u0 = 0                      # Condición inicial para r*R(r)
-                    w0 = 1e-5*(-1)**(factor+2)  # Condición inicial para du/dr
+                    w0 = 1e-5*(-1)**(n)         # Condición inicial para du/dr
                     ur = []
                     wr = []
                     ur.append(u0)
@@ -244,7 +235,7 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
                                 break
                     dE0 = abs(Emax-Emin)
                     
-                print(En)
+                print(En, "MeV")
                 
             if selec == 3:
                 c = 0                           # Contador
@@ -253,7 +244,7 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
                     if c == Nmax: 
                         break
                     u0 = 0                       # Condición inicial para r*R(r)
-                    w0 = 1e-5*(-1)**(factor)     # Condición inicial para du/dr
+                    w0 = 1e-5*(-1)**(n)          # Condición inicial para du/dr
                     oscleap = []
                     oscleap.append([u0,w0])
                     roscapoyo = [0,0]
@@ -289,12 +280,12 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
             plt.xlabel("r (fm)")
             plt.ylabel("U(r)")
             urn = norm(ur, dx)
-            plt.plot(x,urn, color ="k", label="n = {}". format(n))
+            plt.plot(x,urn, color ="k", label="(n,l) = ({},{})". format(n, l))
             plt.legend(loc="best", frameon = False)
             plt.show()
             
             if sav == "s":
-                plt.savefig(input("Introduzca el nombre de la figura 1"), dpi= 400)
+                plt.savefig(input("Introduzca el nombre de la figura 1: "), dpi= 400)
                 
             fig2 = plt.figure()
             plt.title("R(r) frente a la coordenada radial")
@@ -303,11 +294,11 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
             rr = np.zeros(len(ur))
             rr[1:] = urn[1:]/x[1:]
             rrn = norm(rr, dx)
-            plt.plot(x[1:], rrn[1:], color="k", label="n = {}". format(n))
+            plt.plot(x[1:], rrn[1:], color="k", label="(n,l) = ({},{})". format(n, l))
             plt.legend(loc="best", frameon = False)
                  
             if sav == "s":
-                plt.savefig(input("Introduzca el nombre de la figura 2"), dpi= 400)
+                plt.savefig(input("Introduzca el nombre de la figura 2: "), dpi= 400)
         
         fin = input("¿Quiere seguir haciendo simulaciones (s/n)?\n")
         
