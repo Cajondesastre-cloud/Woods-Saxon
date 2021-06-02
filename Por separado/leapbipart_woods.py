@@ -11,7 +11,7 @@ tiempoini = time()      # Inicialización del contador.
 A = 56                                     # Número másico. 
 r0 = 1.285                                 # Constante en m.
 a = 0.65                                   # Consante en m.
-V0 = 47.78                                 # Potencial subcero en meV.
+V0 = 47.78                                 # Potencial subcero en MeV.
 R = r0*A**(1/3)                            # Constante radial corteza.
 Emax = -30
 Emin = -40
@@ -19,7 +19,7 @@ cte = 0.0483
 dE0 = Emax-Emin
 Nmax = 100
 prec = 1e-10
-En = Emax/2 + Emin/2                       # Energía meV.
+En = Emax/2 + Emin/2                       # Energía MeV.
 l = 0
 n = 0
 
