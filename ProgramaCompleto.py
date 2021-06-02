@@ -24,7 +24,7 @@ l = 0                                      # Inicialización número azimutal.
 x = np.linspace(0, R + Rn, 1000)           # Array de posiciones.
 dx = x[1]-x[0]                             # Diferencial de x.
 W0 = 50                                    # Inicialización pozo en MeV.
-
+metnam = 0                                 # Contendrá el nombre del método.
 # Normalización.
 
 def norm(array, h):
@@ -152,12 +152,16 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
          
         if selec == 1:
             func = Runge4
+            metnam = "Runge-Kutta 4º orden"
         elif selec == 2:
             func = Runge2
+            metnam = "Runge-Kutta 2º orden"
         elif selec == 3:
             func = Leap
+            metnam = "Leapfrog"
         elif selec == 4:
             func = Euler
+            metnam = "Euler"
         
         (n, l) = (int(input("Número cuántico principal: \n")), 
                   int(input("Número cuántico azimutal: \n")))
@@ -276,7 +280,7 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
             
             sav = input("¿Quiere guardar los resultados (s/n)?\n")
             
-            plt.title("U(r) frente a la coordenada radial")
+            plt.title("U(r) frente a la coordenada radial: método de {}".format(metnam))
             plt.xlabel("r (fm)")
             plt.ylabel("U(r)")
             urn = norm(ur, dx)
@@ -288,7 +292,7 @@ de Schrödinger:\n 1. Runge-Kutta 4º orden. \n\
                 plt.savefig(input("Introduzca el nombre de la figura 1: "), dpi= 400)
                 
             fig2 = plt.figure()
-            plt.title("R(r) frente a la coordenada radial")
+            plt.title("R(r) frente a la coordenada radial: método de {}".format(metnam))
             plt.xlabel("r (fm)")
             plt.ylabel("R(r)")
             rr = np.zeros(len(ur))
