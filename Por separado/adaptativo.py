@@ -73,13 +73,6 @@ def f2_l(w, u, r, E):
     dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2*r**2))
     return dwdr
         
-def f2_l_alt(w,u,r, E):
-    if r != 0:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)*np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
-    elif r == 0:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2))
-    return dwdr
-        
 def norm(array, h):
     tot = 0
     for i in range(len(array)):
