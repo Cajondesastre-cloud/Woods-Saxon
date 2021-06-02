@@ -11,11 +11,11 @@ tiempoini = time()      # Inicialización del contador.
 A = 56                                     # Número másico. 
 r0 = 1.285                                 # Constante en m.
 a = 0.65                                   # Consante en m.
-V0 = 47.78                                 # Potencial subcero en meV.
+V0 = 47.78                                 # Potencial subcero en MeV.
 R = r0*A**(1/3)                            # Constante radial corteza.
 Emax = -30
 Emin = -40
-En = (Emax+Emin)/2                         # Energía meV.
+En = (Emax+Emin)/2                         # Energía MeV.
 cte = 0.0483
 dE0 = Emax-Emin
 Nmax = 1000
@@ -52,13 +52,6 @@ def f2(w,u,r, E):
 
 def f2_l(w, u, r, E):
     dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2*r**2))
-    return dwdr
-        
-def f2_l_alt(w,u,r, E):
-    if r != 0:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)*np.exp(-r/a)*4*a**2/(0.0483*(1-np.exp(-r/a)))**2)
-    elif r == 0:
-        dwdr=-u*0.0483*(E + V0/(1+np.exp((r-R)/a)) -l*(l+1)/(0.0483*2))
     return dwdr
         
 def norm(array, h):
