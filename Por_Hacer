@@ -1,7 +1,1 @@
-Falta por hacer lo siguiente en el programa:
-- Implementar el modo rápido de ejecución (Con datos en .txt o se introduce manualmente, pensar en ejecución desde consola).
 
-Extra:
-- Comparar resultados? En ese caso debería preparar algunos resultados para que se pueda hacer sin tener que crearlos.
-- Otras estadísticas? T. ejecución, llamadas a función, guardar energías, ...
-- Meter el modo Odeint? Quizás como programa por separado.
