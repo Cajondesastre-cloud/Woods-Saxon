@@ -14,8 +14,8 @@ todos los parámetros de la simulación en un array."""
 # Parámetros simulación
 
 A = 56                                     # Número másico. 
-r0 = 1.285                                 # Constante en m.
-a = 0.65                                   # Consante en m.
+r0 = 1.285                                 # Constante en fm.
+a = 0.65                                   # Consante en fm.
 V0 = 47.78                                 # Potencial principal en MeV.
 R = r0*A**(1/3)                            # Constante radial corteza.
 Rn = 15                                    # Límite array.
