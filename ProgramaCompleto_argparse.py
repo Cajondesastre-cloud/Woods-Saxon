@@ -1,6 +1,6 @@
 # Código del programa empleado para obtener resultados en el TFG del grado
 # en Física de la Universidad de Alicante: Estudio numérico del potencial
-# de Woods-Saxon. Elaborado por David Montiel López (dml22@alu.ua.es).
+# de Woods-Saxon. Elaborado por David Montiel López (davidmontlop@gmail.com).
 
 import numpy as np
 import matplotlib.pyplot as plt
